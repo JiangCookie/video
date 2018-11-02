@@ -1,8 +1,7 @@
 package com.jyh.video.controller;
 
-
 import com.github.pagehelper.util.StringUtil;
-import com.jyh.video.common.utils.IMoocJSONResult;
+import com.jyh.video.common.utils.JSONResult;
 import com.jyh.video.common.utils.MD5Utils;
 import com.jyh.video.pojo.Users;
 import com.jyh.video.service.UserService;
@@ -27,11 +26,11 @@ public class RegistLoginController {
 
     @ApiOperation(value = "用户注册", notes = "用户注册接口")
     @PostMapping("/regist")
-    public IMoocJSONResult regist(@RequestBody Users user) throws Exception {
+    public JSONResult regist(@RequestBody Users user) throws Exception {
 
         //1.判断用户名和密码不为空
         if (StringUtil.isEmpty(user.getUsername()) || StringUtil.isEmpty(user.getPassword())) {
-            return IMoocJSONResult.errorMsg("用户名和密码不能为空");
+            return JSONResult.errorMsg("用户名和密码不能为空");
         }
 
         // 2. 判断用户名是否存在
@@ -46,11 +45,65 @@ public class RegistLoginController {
             user.setFollowCounts(0);
             userService.saveUser(user);
         } else {
-            return IMoocJSONResult.errorMsg("用户名已经存在，请换一个再试");
+            return JSONResult.errorMsg("用户名已经存在，请换一个再试");
         }
 
         user.setPassword("");
-        return IMoocJSONResult.ok(user);
+        return JSONResult.ok(user);
     }
+
+
+    @ApiOperation(value = "用户登录", notes = "用户登录的接口")
+    @PostMapping("/login")
+    public JSONResult login(@RequestBody Users user) throws Exception {
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        // 1. 判断用户名和密码必须不为空
+        if(StringUtil.isEmpty(username) || StringUtil.isEmpty(password)){
+            return JSONResult.ok("用户名或密码不能为空");
+        }
+
+        // 2. 判断用户是否存在
+        Users result = userService.queryUserForLogin(username,MD5Utils.getMD5Str(password));
+
+        // 3. 返回
+        if (result != null) {
+            result.setPassword("");
+
+            return JSONResult.ok(result);
+        } else {
+            return JSONResult.errorMsg("用户名或密码不正确, 请重试...");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

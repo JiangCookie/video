@@ -11,7 +11,7 @@ package com.jyh.video.common.utils;
  * 502：拦截器拦截到用户token出错
  * 555：异常抛出信息
  */
-public class IMoocJSONResult {
+public class JSONResult {
 
     /**
      * 响应业务状态
@@ -33,45 +33,45 @@ public class IMoocJSONResult {
      */
     private String ok;
 
-    public static IMoocJSONResult build(Integer status, String msg, Object data) {
-        return new IMoocJSONResult(status, msg, data);
+    public static JSONResult build(Integer status, String msg, Object data) {
+        return new JSONResult(status, msg, data);
     }
 
-    public static IMoocJSONResult ok(Object data) {
-        return new IMoocJSONResult(data);
+    public static JSONResult ok(Object data) {
+        return new JSONResult(data);
     }
 
-    public static IMoocJSONResult ok() {
-        return new IMoocJSONResult(null);
+    public static JSONResult ok() {
+        return new JSONResult(null);
     }
 
-    public static IMoocJSONResult errorMsg(String msg) {
-        return new IMoocJSONResult(500, msg, null);
+    public static JSONResult errorMsg(String msg) {
+        return new JSONResult(500, msg, null);
     }
 
-    public static IMoocJSONResult errorMap(Object data) {
-        return new IMoocJSONResult(501, "error", data);
+    public static JSONResult errorMap(Object data) {
+        return new JSONResult(501, "error", data);
     }
 
-    public static IMoocJSONResult errorTokenMsg(String msg) {
-        return new IMoocJSONResult(502, msg, null);
+    public static JSONResult errorTokenMsg(String msg) {
+        return new JSONResult(502, msg, null);
     }
 
-    public static IMoocJSONResult errorException(String msg) {
-        return new IMoocJSONResult(555, msg, null);
+    public static JSONResult errorException(String msg) {
+        return new JSONResult(555, msg, null);
     }
 
-    public IMoocJSONResult() {
+    public JSONResult() {
 
     }
 
-    public IMoocJSONResult(Integer status, String msg, Object data) {
+    public JSONResult(Integer status, String msg, Object data) {
         this.status = status;
         this.msg = msg;
         this.data = data;
     }
 
-    public IMoocJSONResult(Object data) {
+    public JSONResult(Object data) {
         this.status = 200;
         this.msg = "OK";
         this.data = data;
