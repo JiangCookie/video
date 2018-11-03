@@ -40,7 +40,7 @@ public class UserController extends BasicController{
     @ApiImplicitParam(name="userId", value="用户id", required=true,
             dataType="String", paramType="query")
     @PostMapping("/uploadFace")
-    public JSONResult uploadFace(String userId, @RequestParam("file") MultipartFile[] files) throws Exception {
+    public JSONResult uploadFace(String userId, @RequestParam("file") MultipartFile files) throws Exception {
 
         //文件命名空间
         String fileSpace = "D:/video_dev";
@@ -52,9 +52,9 @@ public class UserController extends BasicController{
 
 
         try {
-            if (files != null && files.length > 0) {
+            if (files != null ) {
 
-                String fileName = files[0].getOriginalFilename();
+                String fileName = files.getOriginalFilename();
                 if (StringUtil.isNotEmpty(fileName)) {
                     //文件上传的最终保存路径
                     String finalFacePath = fileSpace + uploadPathDB + "/" + fileName;
@@ -69,7 +69,7 @@ public class UserController extends BasicController{
 
 
                     fileOutputStream = new FileOutputStream(outFile);
-                    inputStream = files[0].getInputStream();
+                    inputStream = files.getInputStream();
                     IOUtils.copy(inputStream, fileOutputStream);
                 } else {
                     return JSONResult.errorMsg("上传出错...");
