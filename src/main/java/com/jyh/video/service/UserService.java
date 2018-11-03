@@ -35,4 +35,9 @@ public interface UserService {
      * @param users
      */
     public void updateUserInfo(Users users);
+
+    /**
+     * @Description: 查询用户信息
+     */
+    public Users queryUserInfo(String userId);
 }

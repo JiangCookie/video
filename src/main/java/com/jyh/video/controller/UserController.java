@@ -90,11 +90,22 @@ public class UserController extends BasicController{
         users.setId(userId);
         users.setFaceImage(uploadPathDB);
         userService.updateUserInfo(users);
-        return JSONResult.ok();
+        return JSONResult.ok(uploadPathDB);
     }
 
-
-
+    @ApiOperation(value="查询用户信息", notes="查询用户信息的接口")
+    @ApiImplicitParam(name="userId", value="用户id", required=true,
+            dataType="String", paramType="query")
+    @PostMapping("/query")
+    public JSONResult query(@RequestBody Users user){
+        if(StringUtil.isEmpty(user.getId())){
+            return JSONResult.errorMsg("用户ID不能为空");
+        }
+        Users usersInfo = userService.queryUserInfo(user.getId());
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(usersInfo, usersVO );
+        return JSONResult.ok(usersVO);
+    }
 
 
 
