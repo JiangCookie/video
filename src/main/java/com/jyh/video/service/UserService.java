@@ -28,4 +28,11 @@ public interface UserService {
      * @Description: 用户登录，根据用户名和密码查询用户
      */
     public Users queryUserForLogin(String username, String password);
+
+
+    /**
+     * 修改用户信息
+     * @param users
+     */
+    public void updateUserInfo(Users users);
 }

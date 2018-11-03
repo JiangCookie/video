@@ -4,13 +4,18 @@ import com.github.pagehelper.util.StringUtil;
 import com.jyh.video.common.utils.JSONResult;
 import com.jyh.video.common.utils.MD5Utils;
 import com.jyh.video.pojo.Users;
+import com.jyh.video.pojo.vo.UsersVO;
 import com.jyh.video.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 
 /**
@@ -19,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(value = "用户注册登录的接口", tags = {"注册和登录的controller"})
-public class RegistLoginController {
+public class RegistLoginController extends BasicController{
 
     @Autowired
     private UserService userService;
@@ -49,7 +54,8 @@ public class RegistLoginController {
         }
 
         user.setPassword("");
-        return JSONResult.ok(user);
+        UsersVO usersVO = setUserRedisSessionToken(user);
+        return JSONResult.ok(usersVO);
     }
 
 
@@ -70,16 +76,32 @@ public class RegistLoginController {
         // 3. 返回
         if (result != null) {
             result.setPassword("");
-
-            return JSONResult.ok(result);
+            UsersVO usersVO = setUserRedisSessionToken(result);
+            return JSONResult.ok(usersVO);
         } else {
             return JSONResult.errorMsg("用户名或密码不正确, 请重试...");
         }
     }
 
 
+    public UsersVO setUserRedisSessionToken(Users userModel) {
+        String uniqueToken = UUID.randomUUID().toString();
+        redis.set(USER_REDIS_SESSION + ":" + userModel.getId(), uniqueToken, 1000 * 60 * 30);
 
+        UsersVO userVO = new UsersVO();
+        BeanUtils.copyProperties(userModel, userVO);
+        userVO.setUserToken(uniqueToken);
+        return userVO;
+    }
 
+    @ApiOperation(value="用户注销", notes="用户注销的接口")
+    @ApiImplicitParam(name="userId", value="用户id", required=true,
+            dataType="String", paramType="query")
+    @PostMapping("/logout")
+    public JSONResult logout(String userId) throws Exception {
+        redis.del(USER_REDIS_SESSION + ":" + userId);
+        return JSONResult.ok();
+    }
 
 
 
