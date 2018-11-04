@@ -2,7 +2,6 @@ package com.jyh.video.controller;
 
 import com.github.pagehelper.util.StringUtil;
 import com.jyh.video.common.utils.JSONResult;
-import com.jyh.video.common.utils.MD5Utils;
 import com.jyh.video.pojo.Users;
 import com.jyh.video.pojo.vo.UsersVO;
 import com.jyh.video.service.UserService;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.UUID;
 
 
 /**
