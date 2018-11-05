@@ -30,4 +30,10 @@ public class BgmServiceImpl implements BgmService {
 
         return bgmMapper.selectAll();
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public Bgm queryBgmById(String bgmId) {
+        return bgmMapper.selectByPrimaryKey(bgmId);
+    }
 }

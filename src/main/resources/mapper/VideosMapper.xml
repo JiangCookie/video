@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jyh.video.mapper.VideosMapper" >
+    <insert id="saveReturnPK" parameterType="com.jyh.video.pojo.Videos" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO videos (user_id,audio_id,video_desc,video_path,video_seconds,video_width,video_height,status,create_time,cover_path)
+        VALUES(#{userId}, #{audioId},  #{videoDesc}, #{videoPath},
+        #{videoSeconds}, #{videoWidth}, #{videoHeight}, #{status}, #{createTime}, #{coverPath})
+    </insert>
+</mapper>
+

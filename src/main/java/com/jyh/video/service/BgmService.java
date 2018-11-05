@@ -19,4 +19,11 @@ public interface BgmService {
      */
     public List<Bgm> queryBgmList();
 
+    /**
+     * 根据id查询bgm信息
+     * @param bgmId
+     * @return
+     */
+    public Bgm queryBgmById(String bgmId);
+
 }
