@@ -3,12 +3,14 @@ package com.jyh.video.controller;
 import com.github.pagehelper.util.StringUtil;
 import com.jyh.video.common.utils.JSONResult;
 import com.jyh.video.pojo.Users;
+import com.jyh.video.pojo.vo.PublisherVideosVO;
 import com.jyh.video.pojo.vo.UsersVO;
 import com.jyh.video.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -106,6 +108,27 @@ public class UserController extends BasicController{
     }
 
 
+    @PostMapping("/queryPublisher")
+    public JSONResult queryPublisher(String loginUserId, String videoId, String publishUserId) throws Exception {
+
+        if (StringUtils.isBlank(publishUserId)) {
+            return JSONResult.errorMsg("");
+        }
+
+        // 1. 查询视频发布者的信息
+        Users userInfo = userService.queryUserInfo(publishUserId);
+        UsersVO publisher = new UsersVO();
+        BeanUtils.copyProperties(userInfo, publisher);
+
+        // 2. 查询当前登录者和视频的点赞关系
+        boolean userLikeVideo = userService.isUserLikeVideo(loginUserId, videoId);
+
+        PublisherVideosVO bean = new PublisherVideosVO();
+        bean.setPublisher(publisher);
+        bean.setUserLikeVideo(userLikeVideo);
+
+        return JSONResult.ok(bean);
+    }
 
 
 

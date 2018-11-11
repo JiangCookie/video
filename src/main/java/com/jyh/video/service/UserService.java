@@ -31,8 +31,7 @@ public interface UserService {
 
 
     /**
-     * 修改用户信息
-     * @param users
+     * @Description: 修改用户信息
      */
     public void updateUserInfo(Users users);
 
@@ -40,4 +39,9 @@ public interface UserService {
      * @Description: 查询用户信息
      */
     public Users queryUserInfo(String userId);
+
+    /**
+     * @Description: 查询用户是否喜欢点赞视频
+     */
+    public boolean isUserLikeVideo(String userId, String videoId);
 }

@@ -23,16 +23,19 @@ import javax.sql.DataSource;
 @MapperScan("com.jyh.video.mapper")
 public class VideoApplication {
 
-    private static final String TYPE_ALIASES_PACKAGE = "com.jyh.pojo";
-    @Bean
-    @Autowired
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-        final SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource);
-        //mybatis.typeAliasesPackage：指定domain类的基包，即指定其在*Mapper.xml文件中可以使用简名来代替全类名（看后边的UserMapper.xml介绍）
-        sqlSessionFactoryBean.setTypeAliasesPackage(TYPE_ALIASES_PACKAGE);
-        return sqlSessionFactoryBean.getObject();
-    }
+//    private static final String TYPE_ALIASES_PACKAGE = "com.jyh.pojo";
+//    private static final String MAPPER_LOCATION = "classpath:mapper/*.xml";
+//
+//    @Bean
+//    @Autowired
+//    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+//        final SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+//        sqlSessionFactoryBean.setDataSource(dataSource);
+//        //mybatis.typeAliasesPackage：指定domain类的基包，即指定其在*Mapper.xml文件中可以使用简名来代替全类名（看后边的UserMapper.xml介绍）
+//        sqlSessionFactoryBean.setTypeAliasesPackage(TYPE_ALIASES_PACKAGE);
+//        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATION) );
+//        return sqlSessionFactoryBean.getObject();
+//    }
 
 
 

@@ -6,13 +6,19 @@ import com.jyh.video.common.enums.VideoStatusEnum;
 import com.jyh.video.common.utils.FetchVideoCover;
 import com.jyh.video.common.utils.JSONResult;
 import com.jyh.video.common.utils.MergeVideoMp3;
+import com.jyh.video.common.utils.PagedResult;
 import com.jyh.video.pojo.Bgm;
+import com.jyh.video.pojo.Users;
 import com.jyh.video.pojo.Videos;
+import com.jyh.video.pojo.vo.UsersVO;
 import com.jyh.video.service.BgmService;
+import com.jyh.video.service.UserService;
 import com.jyh.video.service.VideoService;
 import io.swagger.annotations.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +36,9 @@ public class VideoController extends BasicController {
 	
 	@Autowired
 	private BgmService bgmService;
+
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
     private VideoService videoService;
@@ -138,8 +147,16 @@ public class VideoController extends BasicController {
 
 		return JSONResult.ok(id);
 	}
-	
 
+
+    @ApiOperation(value="上传封面", notes="上传封面的接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId", value="用户id", required=true,
+                    dataType="String", paramType="form"),
+            @ApiImplicitParam(name="videoId", value="视频主键id", required=true,
+                    dataType="String", paramType="form")
+    })
+    @PostMapping(value="/uploadCover", headers="content-type=multipart/form-data")
 	public JSONResult upLoadCover(String userId,String videoId,@ApiParam(value = "视频封面", required = true) MultipartFile file) throws IOException {
 	    if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(videoId)){
 	        return JSONResult.errorMsg("视频主键id和用户id不能为空...");
@@ -174,15 +191,75 @@ public class VideoController extends BasicController {
     }
 
 
+    /**
+     * 分页和搜索查询视频列表
+     * isSaveRecord   1 - 需要保存
+     *                0 - 不需要保存 ，或者为空的时候
+     * @param videos
+     * @param isSaveRecord
+     * @param page
+     * @return
+     */
+    @PostMapping("/showAllVideo")
+    public JSONResult showAllVideo(@RequestBody Videos videos,Integer isSaveRecord, Integer page){
+	    if(page == null){
+	        page = 1;
+        }
+
+        PagedResult pagedResult = videoService.getAllVideos(videos,isSaveRecord,page,PAGE_SIZE);
+
+	    return JSONResult.ok(pagedResult);
+    }
 
 
 
+    @PostMapping("/hot")
+    public JSONResult hot(){
+        return JSONResult.ok(videoService.getHotWords());
+    }
 
+    @PostMapping(value="/userLike")
+    public JSONResult userLike(String userId, String videoId, String videoCreaterId)
+            throws Exception {
+        videoService.userLikeVideo(userId, videoId, videoCreaterId);
+        return JSONResult.ok();
+    }
 
-
-
-
+    @PostMapping(value="/userUnLike")
+    public JSONResult userUnLike(String userId, String videoId, String videoCreaterId) throws Exception {
+        videoService.userUnLikeVideo(userId, videoId, videoCreaterId);
+        return JSONResult.ok();
+    }
 
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
