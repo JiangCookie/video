@@ -2,6 +2,7 @@ package com.jyh.video.service;
 
 
 import com.jyh.video.pojo.Users;
+import com.jyh.video.pojo.UsersReport;
 
 /**
  * @author JYH
@@ -44,4 +45,24 @@ public interface UserService {
      * @Description: 查询用户是否喜欢点赞视频
      */
     public boolean isUserLikeVideo(String userId, String videoId);
+
+    /**
+     * @Description: 增加用户和粉丝的关系
+     */
+    public void saveUserFanRelation(String userId,String fanId);
+
+    /**
+     * @Description: 减少用户和粉丝的关系
+     */
+    public void deleteUserFanRelation(String userId,String fanId);
+
+    /**
+     * @Description: 查询用户是否关注
+     */
+    public boolean queryIfFollow(String userId, String fanId);
+
+    /**
+     * @Description: 举报用户
+     */
+    public void reportUser(UsersReport usersReport);
 }

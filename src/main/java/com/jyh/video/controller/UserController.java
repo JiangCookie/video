@@ -3,6 +3,7 @@ package com.jyh.video.controller;
 import com.github.pagehelper.util.StringUtil;
 import com.jyh.video.common.utils.JSONResult;
 import com.jyh.video.pojo.Users;
+import com.jyh.video.pojo.UsersReport;
 import com.jyh.video.pojo.vo.PublisherVideosVO;
 import com.jyh.video.pojo.vo.UsersVO;
 import com.jyh.video.service.UserService;
@@ -97,13 +98,16 @@ public class UserController extends BasicController{
     @ApiImplicitParam(name="userId", value="用户id", required=true,
             dataType="String", paramType="query")
     @PostMapping("/query")
-    public JSONResult query(@RequestBody Users user){
-        if(StringUtil.isEmpty(user.getId())){
+    public JSONResult query(String userId, String fanId){
+        if(StringUtil.isEmpty(userId)){
             return JSONResult.errorMsg("用户ID不能为空");
         }
-        Users usersInfo = userService.queryUserInfo(user.getId());
+        Users usersInfo = userService.queryUserInfo(userId);
         UsersVO usersVO = new UsersVO();
         BeanUtils.copyProperties(usersInfo, usersVO );
+
+        usersVO.setFollow(userService.queryIfFollow(userId, fanId));
+
         return JSONResult.ok(usersVO);
     }
 
@@ -131,23 +135,40 @@ public class UserController extends BasicController{
     }
 
 
+    @PostMapping("/beyourfans")
+    public JSONResult beyourfans(String userId, String fanId) throws Exception {
+
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(fanId)) {
+            return JSONResult.errorMsg("");
+        }
+
+        userService.saveUserFanRelation(userId, fanId);
+
+        return JSONResult.ok("关注成功...");
+    }
+
+    @PostMapping("/dontbeyourfans")
+    public JSONResult dontbeyourfans(String userId, String fanId) throws Exception {
+
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(fanId)) {
+            return JSONResult.errorMsg("");
+        }
+
+        userService.deleteUserFanRelation(userId, fanId);
+
+        return JSONResult.ok("取消关注成功...");
+    }
 
 
 
+    @PostMapping("/reportUser")
+    public JSONResult reportUser(@RequestBody UsersReport usersReport) throws Exception {
 
+        // 保存举报信息
+        userService.reportUser(usersReport);
 
-
-
-
-
-
-
-
-
-
-
-
-
+        return JSONResult.errorMsg("举报成功...有你平台变得更美好...");
+    }
 
 
 }

@@ -2,10 +2,14 @@ package com.jyh.video.service.impl;
 
 
 import com.jyh.video.dao.UsersRepository;
+import com.jyh.video.mapper.UserFansMapper;
 import com.jyh.video.mapper.UsersLikeVideosMapper;
 import com.jyh.video.mapper.UsersMapper;
+import com.jyh.video.mapper.UsersReportMapper;
 import com.jyh.video.pojo.Users;
+import com.jyh.video.pojo.UsersFans;
 import com.jyh.video.pojo.UsersLikeVideos;
+import com.jyh.video.pojo.UsersReport;
 import com.jyh.video.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UsersLikeVideosMapper usersLikeVideosMapper;
+
+    @Autowired
+    private UserFansMapper userFansMapper;
+
+    @Autowired
+    private UsersReportMapper usersReportMapper;
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
@@ -93,6 +104,58 @@ public class UserServiceImpl implements UserService {
         }
 
         return false;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void saveUserFanRelation(String userId, String fanId) {
+        UsersFans usersFans = new UsersFans();
+        usersFans.setUserId(userId);
+        usersFans.setFanId(fanId);
+        userFansMapper.insert(usersFans);
+
+        usersMapper.addFansCount(userId);
+        usersMapper.addFollersCount(fanId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void deleteUserFanRelation(String userId, String fanId) {
+        Example example = new Example(UsersFans.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("userId",userId);
+        criteria.andEqualTo("fanId",fanId);
+
+        userFansMapper.deleteByExample(example);
+
+        usersMapper.reduceFansCount(userId);
+        usersMapper.reduceFollersCount(fanId);
+    }
+
+    @Override
+    public boolean queryIfFollow(String userId, String fanId) {
+        Example example = new Example(UsersFans.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("userId", userId);
+        criteria.andEqualTo("fanId", fanId);
+
+        List<UsersFans> list = userFansMapper.selectByExample(example);
+
+        if (list != null && !list.isEmpty() && list.size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void reportUser(UsersReport usersReport) {
+        usersReport.setCreateDate(new Date());
+
+        usersReportMapper.insert(usersReport);
     }
 }
 

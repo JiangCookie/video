@@ -15,6 +15,7 @@ import com.jyh.video.service.BgmService;
 import com.jyh.video.service.UserService;
 import com.jyh.video.service.VideoService;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -201,16 +202,62 @@ public class VideoController extends BasicController {
      * @return
      */
     @PostMapping("/showAllVideo")
-    public JSONResult showAllVideo(@RequestBody Videos videos,Integer isSaveRecord, Integer page){
+    public JSONResult showAllVideo(@RequestBody Videos videos,Integer isSaveRecord, Integer page,Integer pageSize){
 	    if(page == null){
 	        page = 1;
         }
 
-        PagedResult pagedResult = videoService.getAllVideos(videos,isSaveRecord,page,PAGE_SIZE);
+        if(pageSize == null){
+            pageSize = PAGE_SIZE;
+        }
+        PagedResult pagedResult = videoService.getAllVideos(videos,isSaveRecord,page,pageSize );
 
 	    return JSONResult.ok(pagedResult);
     }
 
+    /**
+     * @Description: 我关注的人发的视频
+     */
+    @PostMapping("/showMyFollow")
+    public JSONResult showMyFollow(String userId, Integer page) throws Exception {
+
+        if (StringUtils.isBlank(userId)) {
+            return JSONResult.ok();
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        int pageSize = 6;
+
+        PagedResult videosList = videoService.queryMyFollowVideos(userId, page, pageSize);
+
+        return JSONResult.ok(videosList);
+    }
+
+    /**
+     * @Description: 我收藏(点赞)过的视频列表
+     */
+    @PostMapping("/showMyLike")
+    public JSONResult showMyLike(String userId, Integer page, Integer pageSize) throws Exception {
+
+        if (StringUtils.isBlank(userId)) {
+            return JSONResult.ok();
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        if (pageSize == null) {
+            pageSize = 6;
+        }
+
+        PagedResult videosList = videoService.queryMyLikeVideos(userId, page, pageSize);
+
+        return JSONResult.ok(videosList);
+    }
 
 
     @PostMapping("/hot")

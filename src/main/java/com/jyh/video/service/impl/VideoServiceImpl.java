@@ -63,11 +63,8 @@ public class VideoServiceImpl implements VideoService {
 
         //保存热搜词
         String content = videos.getVideoDesc();
+        String userId = videos.getUserId();
         if(isSaveRecord != null && isSaveRecord == 1){
-//            SearchRecords searchRecords = new SearchRecords();
-//            searchRecords.setContent(content);
-//            searchRecordsMapper.insert(searchRecords);
-//            searchRecordsMapper.insertSelective(searchRecords);
             searchRecordsMapper.insertSearchRecord(content);
         }
 
@@ -77,6 +74,7 @@ public class VideoServiceImpl implements VideoService {
         PageHelper.startPage(page,pagesize);
         Videos videos1 = new Videos();
         videos1.setVideoDesc(content);
+        videos1.setUserId(userId);
         List<VideosVO> list =  videosMapperCustom.queryAllVideos(videos1);
         PageInfo<VideosVO> pageInfo = new PageInfo<>(list);
 
@@ -85,6 +83,40 @@ public class VideoServiceImpl implements VideoService {
         pagedResult.setTotal(pageInfo.getPages());
         pagedResult.setRows(list);
         pagedResult.setRecords(pageInfo.getTotal());
+        return pagedResult;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public PagedResult queryMyLikeVideos(String userId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<VideosVO> list = videosMapperCustom.queryMyLikeVideos(userId);
+
+        PageInfo<VideosVO> pageInfo = new PageInfo<>(list);
+
+        PagedResult pagedResult = new PagedResult();
+        pagedResult.setTotal(pageInfo.getPages());
+        pagedResult.setRecords(pageInfo.getTotal());
+        pagedResult.setRows(list);
+        pagedResult.setPage(page);
+
+        return pagedResult;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public PagedResult queryMyFollowVideos(String userId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<VideosVO> list = videosMapperCustom.queryMyFollowVideos(userId);
+
+        PageInfo<VideosVO> pageInfo = new PageInfo<>(list);
+
+        PagedResult pagedResult = new PagedResult();
+        pagedResult.setTotal(pageInfo.getPages());
+        pagedResult.setRecords(pageInfo.getTotal());
+        pagedResult.setRows(list);
+        pagedResult.setPage(page);
+
         return pagedResult;
     }
 

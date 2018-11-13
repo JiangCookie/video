@@ -32,6 +32,16 @@ public interface VideoService {
 
 
     /**
+     * @Description: 查询我喜欢的视频列表
+     */
+    public PagedResult queryMyLikeVideos(String userId, Integer page, Integer pageSize);
+
+    /**
+     * @Description: 查询我关注的人的视频列表
+     */
+    public PagedResult queryMyFollowVideos(String userId, Integer page, Integer pageSize);
+
+    /**
      * @Description: 获取热搜词列表
      */
     public List<String> getHotWords();
